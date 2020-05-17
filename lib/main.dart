@@ -1,14 +1,31 @@
+import 'dart:io';
+
 import 'package:clickerapp/screens/dashboard_screen.dart';
+import 'package:clickerapp/screens/sign_up.dart';
 import 'package:clickerapp/screens/signup_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MaterialApp(
-  home: HomeScreen(),
+void main() async {
+  Socket sock = await Socket.connect('192.168.0.103', 3001);
+  runApp(MaterialApp(
+    home: HomeScreen(
+      channel: sock,
+    ),
+  ));
+}
 
+class HomeScreen extends StatefulWidget {
+  final Socket channel;
 
-));
-class HomeScreen extends StatelessWidget {
+  HomeScreen({Key key, @required this.channel}) : super(key: key);
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,11 +79,12 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 30, bottom: 10, top: 15),
+                              padding: const EdgeInsets.only(
+                                  left: 30, bottom: 10, top: 15),
                               child: Align(
                                 alignment: Alignment.topLeft,
                                 child: Text(
-                                    'USERNAME',
+                                  'USERNAME',
                                   style: TextStyle(
                                     color: Colors.grey[800],
                                     fontSize: 22,
@@ -80,12 +98,12 @@ class HomeScreen extends StatelessWidget {
                                 children: <Widget>[
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.only(left: 30, bottom: 10, top: 10),
+                                      padding: const EdgeInsets.only(
+                                          left: 30, bottom: 10, top: 10),
                                       child: TextField(
                                         autocorrect: false,
-                                        decoration: InputDecoration(
-                                          hintText: ''
-                                        ),
+                                        decoration:
+                                            InputDecoration(hintText: ''),
                                       ),
                                     ),
                                   ),
@@ -95,9 +113,10 @@ class HomeScreen extends StatelessWidget {
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 30, bottom: 10, top: 15),
+                                padding: const EdgeInsets.only(
+                                    left: 30, bottom: 10, top: 15),
                                 child: Text(
-                                    'PASSWORD',
+                                  'PASSWORD',
                                   style: TextStyle(
                                     color: Colors.grey[800],
                                     fontSize: 22,
@@ -111,13 +130,14 @@ class HomeScreen extends StatelessWidget {
                                 children: <Widget>[
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.only(left: 30, bottom: 10, top: 10),
+                                      padding: const EdgeInsets.only(
+                                          left: 30, bottom: 10, top: 10),
                                       child: TextField(
                                         obscureText: true,
                                         autocorrect: false,
                                         decoration: InputDecoration(
                                             //labelText: 'Password',
-                                        ),
+                                            ),
                                       ),
                                     ),
                                   ),
@@ -129,7 +149,10 @@ class HomeScreen extends StatelessWidget {
                               child: GestureDetector(
                                 onTap: () => Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (_) => DashboardScreen(),),),
+                                  MaterialPageRoute(
+                                    builder: (_) => DashboardScreen(),
+                                  ),
+                                ),
                                 child: Container(
                                   height: 60,
                                   width: 300,
@@ -141,8 +164,12 @@ class HomeScreen extends StatelessWidget {
                                     child: GestureDetector(
                                       onTap: () => Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (_) => DashboardScreen(),),),
-                                      child: Text('SIGN IN',
+                                        MaterialPageRoute(
+                                          builder: (_) => DashboardScreen(),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'SIGN IN',
                                         style: TextStyle(
                                           color: Colors.white,
                                           letterSpacing: 5.0,
@@ -158,7 +185,8 @@ class HomeScreen extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Text('New user?',
+                                Text(
+                                  'New user?',
                                   style: TextStyle(
                                     color: Colors.grey[800],
                                     fontSize: 22,
@@ -168,9 +196,13 @@ class HomeScreen extends StatelessWidget {
                                 SizedBox(width: 15),
                                 GestureDetector(
                                   onTap: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (_) => SignUpScreen(),),),
-                                  child: Text('Sign Up',
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => signUpScreen(widget.channel),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Sign Up',
                                     style: TextStyle(
                                       color: Colors.blue,
                                       fontSize: 22,
@@ -180,10 +212,8 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-
                           ],
                         ),
-
                       ),
                     ),
                   ),
@@ -196,5 +226,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
-

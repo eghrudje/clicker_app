@@ -1,6 +1,8 @@
 import 'package:clickerapp/screens/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
+import 'package:flutter/foundation.dart';
+import 'dart:io';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -310,7 +312,8 @@ class _buildVerticalLaoutState extends State<buildVerticalLayout> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(10.0),
                                         child: TextFormField(
-                                          controller: _confirmPasswordController,
+                                          controller:
+                                              _confirmPasswordController,
                                           obscureText: true,
                                           autocorrect: false,
                                           decoration: InputDecoration(
@@ -442,7 +445,7 @@ class _buildVerticalLaoutState extends State<buildVerticalLayout> {
         print('done');
       });
     } else {
-      setState(() =>  _autoValidate = true);
+      setState(() => _autoValidate = true);
     }
   }
 }
@@ -480,7 +483,7 @@ class _buildHorizontalLayoutState extends State<buildHorizontalLayout> {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                   child: Card(
+                  child: Card(
                     shape: RoundedRectangleBorder(
                       side: BorderSide(color: Colors.white70, width: 1),
                       borderRadius: BorderRadius.circular(20),
