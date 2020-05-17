@@ -17,6 +17,7 @@ import 'dart:io';
 
 class signUpScreen extends StatefulWidget {
   Socket socket;
+
   signUpScreen(Socket s) {
     this.socket = s;
   }
@@ -412,7 +413,7 @@ class _SignUpScreenState extends State<signUpScreen> {
   }
 
   // ignore: missing_return
-  GestureDetector submit() {
+  submit() async {
     //Checks for validation
     final form = _formKey.currentState;
     if (form.validate()) {
@@ -436,9 +437,11 @@ class _SignUpScreenState extends State<signUpScreen> {
         setState(() {
           _isLoading = false;
           print('sign up successful');
-          // goes to the next activity
-          Navigator.pop(context);
+          //send to sharedpref
         });
+
+        // goes to the next activity
+        Navigator.pop(context);
       } else {
         setState(() {
           print('sign up NOT successful');
