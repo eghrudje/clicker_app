@@ -1,47 +1,34 @@
 import 'dart:io';
-
+import 'package:clickerapp/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:clickerapp/screens/dashboard_screen.dart';
 import 'package:clickerapp/screens/sign_up.dart';
 import 'package:clickerapp/screens/signup_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-void main() async {
-  Socket sock = await Socket.connect('192.168.43.254', 3001);
+import 'package:fluttertoast/fluttertoast.dart';
+void main() {
   runApp(MaterialApp(
-    home: HomeScreen(
-      channel: sock,
-    ),
+    home: ConfigScreen(),
   ));
 }
 
-class HomeScreen extends StatefulWidget {
-  Socket socket;
-
-  signUpScreen(Socket s) {
-    this.socket = s;
-  }
-
-  final Socket channel;
-
-  HomeScreen({Key key, @required this.channel}) : super(key: key);
-
+class ConfigScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<ConfigScreen> {
   bool _isLoading = false;
   bool _autoValidate = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _matricNoController = new TextEditingController();
-  TextEditingController _passwordController = new TextEditingController();
+  TextEditingController _ipAddressController = new TextEditingController();
+  TextEditingController _portController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: _isLoading
@@ -75,8 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.all(18.0),
                             child: Card(
                               shape: RoundedRectangleBorder(
-                                side:
-                                    BorderSide(color: Colors.red, width: 1),
+                                side: BorderSide(color: Colors.red, width: 0.2),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               elevation: 5,
@@ -91,9 +77,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(25.0),
                                         child: Text(
-                                          'SIGN IN',
+                                          'SETUP',
                                           style: TextStyle(
-                                            color: Colors.red,
+                                            color: Colors.black,
                                             fontSize: 40,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -106,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: Align(
                                         alignment: Alignment.topLeft,
                                         child: Text(
-                                          'USERNAME',
+                                          'IP Address',
                                           style: TextStyle(
                                             color: Colors.grey[800],
                                             fontSize: 22,
@@ -126,15 +112,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   top: 10),
                                               child: TextFormField(
                                                 autocorrect: false,
+                                                keyboardType: TextInputType.phone,
                                                 controller:
-                                                    _matricNoController,
+                                                    _ipAddressController,
                                                 decoration: InputDecoration(
                                                     hintText: ''),
-                                                validator: (val) {
-                                                  if (val.length == 0) {
-                                                    return 'Username Not filled';
-                                                  } else {
+                                                validator: (value) {
+                                                  if (value.isEmpty) {
+                                                    return "Enter IP Address";
+                                                  }
+//                                                  String ip =
+//                                                      '/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\z/';
+//                                                  RegExp regExp =
+//                                                      new RegExp(ip);
+//                                                  if (regExp.hasMatch(value)) {
+                                                  if (value.length > 6) {
                                                     return null;
+                                                  }else{
+                                                    return 'Enter a valid IP Address';
                                                   }
                                                 },
                                               ),
@@ -149,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         padding: const EdgeInsets.only(
                                             left: 30, bottom: 10, top: 15),
                                         child: Text(
-                                          'PASSWORD',
+                                          'PORT',
                                           style: TextStyle(
                                             color: Colors.grey[800],
                                             fontSize: 22,
@@ -168,15 +163,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   bottom: 10,
                                                   top: 10),
                                               child: TextFormField(
-                                                controller: _passwordController,
-                                                obscureText: true,
+                                                controller: _portController,
                                                 autocorrect: false,
+                                                keyboardType: TextInputType.phone,
                                                 decoration: InputDecoration(
                                                     //labelText: 'Password',
                                                     ),
                                                 validator: (val) {
+                                                  assert(int.parse(val) is int);
                                                   if (val.length == 0) {
-                                                    return 'Password Not filled';
+                                                    return 'Port Not filled';
                                                   } else {
                                                     return null;
                                                   }
@@ -195,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         color: Colors.blue[700],
                                         child: Center(
                                           child: Text(
-                                            'SIGN IN',
+                                            'Config',
                                             style: TextStyle(
                                               color: Colors.white,
                                               letterSpacing: 5.0,
@@ -206,38 +202,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         onPressed: submit,
                                       ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text(
-                                          'New user?',
-                                          style: TextStyle(
-                                            color: Colors.grey[800],
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        SizedBox(width: 15),
-                                        GestureDetector(
-                                          onTap: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) =>
-                                                  signUpScreen(widget.channel),
-                                            ),
-                                          ),
-                                          child: Text(
-                                            'Sign Up',
-                                            style: TextStyle(
-                                              color: Colors.blue,
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
                                     ),
                                   ],
                                 ),
@@ -255,58 +219,73 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   submit() async {
-    //Checks for validation
-    final form = _formKey.currentState;
-    if (form.validate()) {
-      form.save();
+try{
+  Socket sock = await Socket.connect(
+      _ipAddressController.text, int.parse(_portController.text));
+
+  //Checks for validation
+  final form = _formKey.currentState;
+  if (form.validate()) {
+    form.save();
+    setState(() {
+      _isLoading = true;
+    });
+    print('sending to server');
+    //TODO: Server code comes here
+
+    // concat strings
+    String message = 'Testing the mic. !-2';
+
+    // send to server //
+    sock.write(message);
+
+    //get response //check if response was a true before proceeding //
+    String response = "okay";
+
+    if (response == "okay") {
       setState(() {
-        _isLoading = true;
+        _isLoading = false;
+        print('sign up successful');
+        //save to sharedpref
       });
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('matricNumber',_matricNoController.text);
-      prefs.setString('password',_passwordController.text);
-      print('Sent to sharedpref');
+      prefs.setString('ipAddress', _ipAddressController.text);
+      prefs.setString('port', _portController.text);
+      print("Sent to sharedpref");
 
-      //TODO: Server code comes here
-
-      // concat strings
-      String message = 'Testing the mic. !-2';
-
-      // send to server //
-      widget.channel.write(message + '\n');
-      print('sending to server');
-      //get response //check if response was a true before proceeding //
-      String response = "okay";
-
-      if (response == "okay") {
-        setState(() {
-          _isLoading = false;
-          print('sign up successful');
-          //save to sharedpref
-        });
-
-
-        // goes to the next activity
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => DashboardScreen(),
-            ));
-      } else {
-        setState(() {
-          print('sign up NOT successful');
-          _isLoading = false;
-//toast an error message to user
-        });
-      }
+      // goes to the next activity
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => HomeScreen(channel: sock),
+          ));
     } else {
-      setState(() => _autoValidate = true);
+      setState(() {
+        print('sign up NOT successful');
+        _isLoading = false;
+//toast an error message to user
+      });
     }
+  } else {
+    setState(() => _autoValidate = true);
+  }
+}catch  (e){
+  //toast an error message to user
+  Fluttertoast.showToast(
+      msg: e.toString(),
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 16.0
+  );
+}
+
   }
 
   @override
   void dispose() {
-    widget.channel.close();
     super.dispose();
   }
 }

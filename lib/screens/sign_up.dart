@@ -27,6 +27,17 @@ class signUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<signUpScreen> {
+  List<DropdownMenuItem<int>> listDrop = [];
+  int selected = null;
+  void loadData(){
+    listDrop = [];
+    listDrop.add(new DropdownMenuItem(child: new Text('Level:  100'), value: 1,));
+    listDrop.add(new DropdownMenuItem(child: new Text('Level:  200'), value: 2,));
+    listDrop.add(new DropdownMenuItem(child: new Text('Level:  300'), value: 3,));
+    listDrop.add(new DropdownMenuItem(child: new Text('Level:  400'), value: 4,));
+    listDrop.add(new DropdownMenuItem(child: new Text('Level:  500'), value: 5,));
+    listDrop.add(new DropdownMenuItem(child: new Text('Level:  600'), value: 6,));
+  }
   bool _isLoading = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -42,6 +53,7 @@ class _SignUpScreenState extends State<signUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    loadData();
     return Scaffold(
       backgroundColor: Colors.blue,
       body: SafeArea(
@@ -228,25 +240,25 @@ class _SignUpScreenState extends State<signUpScreen> {
                                       Expanded(
                                         child: Padding(
                                           padding: const EdgeInsets.all(10.0),
-                                          child: TextFormField(
-                                            controller: _levelController,
-                                            autocorrect: false,
-                                            decoration: InputDecoration(
-                                              labelText: 'Level:',
-                                              fillColor: Colors.red,
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(25),
-                                                borderSide: BorderSide(),
-                                              ),
+                                          child: DropdownButton(
+                                            elevation: 16,
+                                            icon: Padding(
+                                              padding: EdgeInsets.only(left: 200, right: 10, top: 10, bottom: 10),
+                                                child: Icon(Icons.arrow_drop_down)),
+                                            value: selected,
+                                            items: listDrop,
+                                            hint: Padding(
+                                              padding: const EdgeInsets.only(left: 40, right: 20),
+                                              child: Text('Level',
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                              ),),
                                             ),
-                                            validator: (val) {
-                                              if (val.length == 0) {
-                                                return 'Level Not filled';
-                                              } else {
-                                                return null;
-                                              }
-                                            },
+                                            onChanged: (value) {
+                                              setState(() {
+                                                selected = value;
+                                              });
+                                            }
                                           ),
                                         ),
                                       ),
@@ -268,7 +280,7 @@ class _SignUpScreenState extends State<signUpScreen> {
                                               fillColor: Colors.red,
                                               border: OutlineInputBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(25),
+                                                BorderRadius.circular(25),
                                                 borderSide: BorderSide(),
                                               ),
                                             ),
@@ -280,6 +292,7 @@ class _SignUpScreenState extends State<signUpScreen> {
                                               }
                                             },
                                           ),
+
                                         ),
                                       ),
                                     ],
@@ -437,7 +450,6 @@ class _SignUpScreenState extends State<signUpScreen> {
         setState(() {
           _isLoading = false;
           print('sign up successful');
-          //send to sharedpref
         });
 
         // goes to the next activity

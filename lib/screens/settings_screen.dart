@@ -1,7 +1,4 @@
-
-
 import 'package:flutter/material.dart';
-
 import 'bottom_sheet.dart';
 
 class SettingsScreen extends StatefulWidget {

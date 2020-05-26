@@ -28,6 +28,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   shared_preferences: ^0.5.7+2
+  fluttertoast: ^4.0.0
+
 
 
 # For information on the generic Dart part of this file, see the
