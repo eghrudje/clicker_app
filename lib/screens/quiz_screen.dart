@@ -33,30 +33,54 @@ class QuizScreen extends StatefulWidget {
 class _QuizScreenState extends State<QuizScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  int selectedRadioTile;
-  int selectedRadioTileOne;
+  int selectedRadioOption;
+  bool isQuestionReceived = false;
+  String optionType = '';
+  String optionT = '';
+  dynamic questionOptions;
+  String question = '';
+  String answer = '';
 
-  setSelectedRadioTile(int val) {
+  setSelectedRadioOption(int val) {
     setState(() {
-      selectedRadioTile = val;
-    });
-  }
-
-  setSelectedRadioTileOne(int val) {
-    setState(() {
-      selectedRadioTileOne = val;
+      selectedRadioOption = val;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    selectedRadioTile = 0;
-    selectedRadioTileOne = 0;
+    selectedRadioOption = 0;
   }
 
   @override
   void didChangeDependencies() {}
+
+  String receivedMessage(String message) {
+    //.................Split ohhhhh... when you are done spliting, then setState.............//
+
+    //split
+    dynamic splited = message.split('*#');
+
+    question = splited[0];
+    optionT = splited[1];
+    answer = splited[2];
+
+
+    //check optionType to know how to split further
+    if (optionT == 'Multiple Choice') {
+      questionOptions = question.split('|');
+      question = questionOptions[0];
+    }
+
+    //setState
+    setState(() {
+      isQuestionReceived = true;
+      optionType = optionT;
+    });
+
+    return question;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,17 +95,6 @@ class _QuizScreenState extends State<QuizScreen> {
                 )
               : Column(
                   children: <Widget>[
-                    StreamBuilder(
-                      stream: widget.channel,
-                      builder: (context, snapshot) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 24),
-                          child: Text(snapshot.hasData
-                              ? '${String.fromCharCodes(snapshot.data)}'
-                              : ''),
-                        );
-                      },
-                    ),
                     Padding(
                       padding: const EdgeInsets.only(top: 80, left: 30),
                       child: Align(
@@ -103,10 +116,16 @@ class _QuizScreenState extends State<QuizScreen> {
                         child: SingleChildScrollView(
                           scrollDirection: Axis.vertical,
                           reverse: true,
-                          child: TextField(
-                            keyboardType: TextInputType.multiline,
-                            decoration: InputDecoration.collapsed(
-                                fillColor: Colors.grey, filled: true),
+                          child: StreamBuilder(
+                            stream: widget.channel,
+                            builder: (context, snapshot) {
+                              return Text(
+                                snapshot.hasData
+                                    ? receivedMessage(
+                                        String.fromCharCodes(snapshot.data))
+                                    : '',
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -133,7 +152,9 @@ class _QuizScreenState extends State<QuizScreen> {
                                       elevation: 10,
                                       child: Column(
                                         children: <Widget>[
-                                          RadioButtonMC(),
+                                          optionType == 'Multiple Choice'
+                                              ? RadioButtonMC()
+                                              : RadioButtonTF(),
                                         ],
                                       ),
                                     ),
@@ -143,34 +164,6 @@ class _QuizScreenState extends State<QuizScreen> {
                             ),
                           ],
                         ),
-//                  Column(
-//                    children: <Widget>[
-//                      Container(
-//                        height: 450,
-//                        width: MediaQuery.of(context).size.width,
-//                        child: Padding(
-//                          padding: const EdgeInsets.all(8.0),
-//                          child: Scrollbar(
-//                            child: SingleChildScrollView(
-//                              child: Card(
-//                                shape: RoundedRectangleBorder(
-//                                  side: BorderSide(
-//                                      color: Colors.white70, width: 1),
-//                                  borderRadius: BorderRadius.circular(20),
-//                                ),
-//                                elevation: 10,
-//                                child: Column(
-//                                  children: <Widget>[
-//                                    RadioButtonTF(),
-//                                  ],
-//                                ),
-//                              ),
-//                            ),
-//                          ),
-//                        ),
-//                      ),
-//                    ],
-//                  ),
                       ],
                     ),
                     Padding(
@@ -181,20 +174,22 @@ class _QuizScreenState extends State<QuizScreen> {
                         ),
                         elevation: 15,
                         color: Color(0xFF801E48),
-                        child: MaterialButton(
-                            minWidth: 200,
-                            height: 40,
-                            color: Color(0xFF801E48),
-                            child: Text(
-                              'Submit',
-                              style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                                color: Colors.white,
-                              ),
-                            ),
-                            onPressed: submit),
+                        child: isQuestionReceived
+                            ? MaterialButton(
+                                minWidth: 200,
+                                height: 40,
+                                color: Color(0xFF801E48),
+                                child: Text(
+                                  'Submit',
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                onPressed: submit)
+                            : Container(),
                       ),
                     ),
                   ],
@@ -223,9 +218,9 @@ class _QuizScreenState extends State<QuizScreen> {
         SizedBox(height: 15),
         RadioListTile(
           value: 1,
-          groupValue: selectedRadioTile,
+          groupValue: selectedRadioOption,
           title: Text(
-            'A',
+            'A. ' + questionOptions[1],
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 25,
@@ -234,16 +229,16 @@ class _QuizScreenState extends State<QuizScreen> {
           ),
           onChanged: (val) {
             print(val);
-            setSelectedRadioTile(val);
+            setSelectedRadioOption(val);
           },
           activeColor: Colors.grey[800],
           selected: true,
         ),
         RadioListTile(
           value: 2,
-          groupValue: selectedRadioTile,
+          groupValue: selectedRadioOption,
           title: Text(
-            'B',
+            'B. ' + questionOptions[2],
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 25,
@@ -252,16 +247,16 @@ class _QuizScreenState extends State<QuizScreen> {
           ),
           onChanged: (val) {
             print(val);
-            setSelectedRadioTile(val);
+            setSelectedRadioOption(val);
           },
           activeColor: Colors.grey[800],
           selected: true,
         ),
         RadioListTile(
           value: 3,
-          groupValue: selectedRadioTile,
+          groupValue: selectedRadioOption,
           title: Text(
-            'C',
+            'C. ' + questionOptions[3],
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 25,
@@ -270,16 +265,16 @@ class _QuizScreenState extends State<QuizScreen> {
           ),
           onChanged: (val) {
             print(val);
-            setSelectedRadioTile(val);
+            setSelectedRadioOption(val);
           },
           activeColor: Colors.grey[800],
           selected: true,
         ),
         RadioListTile(
           value: 4,
-          groupValue: selectedRadioTile,
+          groupValue: selectedRadioOption,
           title: Text(
-            'D',
+            'D. ' + questionOptions[4],
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 25,
@@ -287,7 +282,7 @@ class _QuizScreenState extends State<QuizScreen> {
             ),
           ),
           onChanged: (val) {
-            setSelectedRadioTile(val);
+            setSelectedRadioOption(val);
           },
           activeColor: Colors.grey[800],
           selected: true,
@@ -315,7 +310,7 @@ class _QuizScreenState extends State<QuizScreen> {
         SizedBox(height: 15),
         RadioListTile(
           value: 1,
-          groupValue: selectedRadioTileOne,
+          groupValue: selectedRadioOption,
           title: Text(
             'True',
             style: TextStyle(
@@ -325,7 +320,7 @@ class _QuizScreenState extends State<QuizScreen> {
             ),
           ),
           onChanged: (val) {
-            setSelectedRadioTile(val);
+            setSelectedRadioOption(val);
           },
           activeColor: Colors.grey[800],
           selected: true,
@@ -333,7 +328,7 @@ class _QuizScreenState extends State<QuizScreen> {
         SizedBox(height: 10),
         RadioListTile(
           value: 2,
-          groupValue: selectedRadioTileOne,
+          groupValue: selectedRadioOption,
           title: Text(
             'False',
             style: TextStyle(
@@ -343,7 +338,7 @@ class _QuizScreenState extends State<QuizScreen> {
             ),
           ),
           onChanged: (val) {
-            setSelectedRadioTile(val);
+            setSelectedRadioOption(val);
           },
           activeColor: Colors.grey[800],
           selected: true,
@@ -354,7 +349,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
   submit() async {
     //Checks for validation
-    if (selectedRadioTile == 0 && selectedRadioTileOne == 0) {
+    if (selectedRadioOption == 0 && selectedRadioOption == 0) {
       Fluttertoast.showToast(
           msg: 'Please select an option',
           toastLength: Toast.LENGTH_SHORT,
@@ -403,17 +398,17 @@ class _QuizScreenState extends State<QuizScreen> {
 //}
 //
 //class _RadioWidgetDemoState extends State<RadioWidgetDemo> {
-//  int selectedRadioTile;
+//  int selectedRadioOption;
 //
 //  @override
 //  void initState() {
 //    super.initState();
-//    selectedRadioTile = 0;
+//    selectedRadioOption = 0;
 //  }
 //
-//  setSelectedRadioTile(int val) {
+//  setSelectedRadioOption(int val) {
 //    setState(() {
-//      selectedRadioTile = val;
+//      selectedRadioOption = val;
 //    });
 //  }
 //
@@ -429,17 +424,17 @@ class _QuizScreenState extends State<QuizScreen> {
 //}
 //
 //class _RadioWidgetDemoOneState extends State<RadioWidgetDemoOne> {
-//  int selectedRadioTileOne;
+//  int selectedRadioOptionOne;
 //
 //  @override
 //  void initState() {
 //    super.initState();
-//    selectedRadioTileOne = 0;
+//    selectedRadioOptionOne = 0;
 //  }
 //
-//  setSelectedRadioTileOne(int val) {
+//  setSelectedRadioOptionOne(int val) {
 //    setState(() {
-//      selectedRadioTileOne = val;
+//      selectedRadioOptionOne = val;
 //    });
 //  }
 //
