@@ -40,6 +40,7 @@ class _QuizScreenState extends State<QuizScreen> {
   dynamic questionOptions;
   String question = '';
   String answer = '';
+  int counter = 0;
 
   setSelectedRadioOption(int val) {
     setState(() {
@@ -53,33 +54,33 @@ class _QuizScreenState extends State<QuizScreen> {
     selectedRadioOption = 0;
   }
 
-  @override
-  void didChangeDependencies() {}
 
   String receivedMessage(String message) {
+//CATCH FIRST TIME EXCEPTION
+    counter++;
     //.................Split ohhhhh... when you are done spliting, then setState.............//
+    if (counter > 2) {
+      print('Incoming: ${message.toString()}');
+      //split
+      dynamic splited = message.split('*#');
 
-    //split
-    dynamic splited = message.split('*#');
+      question = splited[0];
+      optionT = splited[1];
+      answer = splited[2];
 
-    question = splited[0];
-    optionT = splited[1];
-    answer = splited[2];
+      //check optionType to know how to split further
+      if (optionT == 'Multiple Choice') {
+        questionOptions = question.split('|');
+        question = questionOptions[0];
+      }
 
-
-    //check optionType to know how to split further
-    if (optionT == 'Multiple Choice') {
-      questionOptions = question.split('|');
-      question = questionOptions[0];
-    }
-
-    //setState
-    setState(() {
       isQuestionReceived = true;
       optionType = optionT;
-    });
 
-    return question;
+      return question.substring(21, question.length);
+    } else {
+      return 'Connected To Teacher';
+    }
   }
 
   @override
@@ -87,13 +88,7 @@ class _QuizScreenState extends State<QuizScreen> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          child: _isLoading
-              ? Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.white,
-                  ),
-                )
-              : Column(
+          child: Column(
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(top: 80, left: 30),
@@ -119,77 +114,106 @@ class _QuizScreenState extends State<QuizScreen> {
                           child: StreamBuilder(
                             stream: widget.channel,
                             builder: (context, snapshot) {
-                              return Text(
-                                snapshot.hasData
-                                    ? receivedMessage(
-                                        String.fromCharCodes(snapshot.data))
-                                    : '',
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16, horizontal: 10),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        snapshot.hasData
+                                            ? receivedMessage(
+                                                String.fromCharCodes(
+                                                    snapshot.data))
+                                            : 'Waiting for a question',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      Column(
+                                        children: <Widget>[
+                                          Container(
+                                            height: 450,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width-20,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Scrollbar(
+                                                child: SingleChildScrollView(
+                                                  scrollDirection:
+                                                      Axis.vertical,
+                                                  child: Card(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                          color: Colors.white70,
+                                                          width: 1),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    elevation: 10,
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                      children: <Widget>[
+                                                        optionType ==
+                                                                'Multiple Choice'
+                                                            ? RadioButtonMC()
+                                                            : RadioButtonTF(),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(20),
+                                    child: Material(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(22),
+                                      ),
+                                      elevation: 15,
+                                      color: Color(0xFF801E48),
+                                      child: isQuestionReceived
+                                          ? MaterialButton(
+                                              minWidth: 200,
+                                              height: 40,
+                                              color: Color(0xFF801E48),
+                                              child: Text(
+                                                'Submit',
+                                                style: TextStyle(
+                                                  fontSize: 30,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontStyle: FontStyle.italic,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                onPressed: submit)
+//                                              onPressed: sendBackToServer)
+                                          : Container(),
+                                    ),
+                                  ),
+                                ],
                               );
                             },
                           ),
                         ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Container(
-                              height: 450,
-                              width: MediaQuery.of(context).size.width,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Scrollbar(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.vertical,
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(
-                                            color: Colors.white70, width: 1),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      elevation: 10,
-                                      child: Column(
-                                        children: <Widget>[
-                                          optionType == 'Multiple Choice'
-                                              ? RadioButtonMC()
-                                              : RadioButtonTF(),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Material(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(22),
-                        ),
-                        elevation: 15,
-                        color: Color(0xFF801E48),
-                        child: isQuestionReceived
-                            ? MaterialButton(
-                                minWidth: 200,
-                                height: 40,
-                                color: Color(0xFF801E48),
-                                child: Text(
-                                  'Submit',
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                onPressed: submit)
-                            : Container(),
                       ),
                     ),
                   ],
@@ -345,6 +369,10 @@ class _QuizScreenState extends State<QuizScreen> {
         ),
       ],
     );
+  }
+
+  sendBackToServer() {
+    widget.channel.write('We see you bro');
   }
 
   submit() async {

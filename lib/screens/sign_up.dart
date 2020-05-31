@@ -438,7 +438,7 @@ class _SignUpScreenState extends State<signUpScreen> {
       //TODO: Server code comes here
 
       // concat strings
-      String message = 'Testing the mic. !-2';
+      String message = 'signUP page';
 
       // send to server //
       widget.socket.write(message + '\n');

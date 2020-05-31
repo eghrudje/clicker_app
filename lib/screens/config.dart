@@ -234,7 +234,7 @@ try{
     //TODO: Server code comes here
 
     // concat strings
-    String message = 'Testing the mic. !-2';
+    String message = 'configPage';
 
     // send to server //
     sock.write(message);

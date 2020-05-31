@@ -270,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
       //TODO: Server code comes here
 
       // concat strings
-      String message = 'Testing the mic. !-2';
+      String message = 'signIN';
 
       // send to server //
       widget.channel.write(message + '\n');
@@ -290,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => DashboardScreen(),
+              builder: (_) => DashboardScreen(channel: widget.channel,),
             ));
       } else {
         setState(() {
