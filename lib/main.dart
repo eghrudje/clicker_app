@@ -6,22 +6,10 @@ import 'package:clickerapp/screens/signup_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-void main() async {
-  Socket sock = await Socket.connect('192.168.43.254', 3001);
-  runApp(MaterialApp(
-    home: HomeScreen(
-      channel: sock,
-    ),
-  ));
-}
+import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeScreen extends StatefulWidget {
-  Socket socket;
 
-  signUpScreen(Socket s) {
-    this.socket = s;
-  }
 
   final Socket channel;
 
@@ -37,6 +25,55 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _matricNoController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
+  int counter = 0;
+  String fullName;
+  String level;
+  String department;
+
+ String receivedMessage(String message)  {
+//CATCH FIRST TIME EXCEPTION
+   print("Reached here");
+
+//   counter++;
+    //.................Split ohhhhh... when you are done splitting, then setState.............//
+  //  if (counter > 1) {
+      print('Incoming: ${message.toString()}');
+      //split
+      dynamic splited = message.split('*#');
+
+      print(splited);
+
+      fullName = splited[0];
+      level = splited[1];
+      department = splited[2];
+      print(fullName + level + department);
+
+
+//      SharedPreferences prefs;
+//      prefs = await SharedPreferences.getInstance();
+//
+//      prefs.setString('matricNumber', _matricNoController.text.trim());
+//      prefs.setString('name', splited[0]);
+//      prefs.setString('level', splited[1]);
+//      prefs.setString('department', splited[2]);
+
+      // goes to the next activity
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DashboardScreen(
+              channel: widget.channel,
+              fullName: fullName,
+              level: level,
+              department: department,
+
+            ),
+          ));
+  //  }
+
+    return "done";
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -44,14 +81,9 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.blue,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: _isLoading
-              ? Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.white,
-                  ),
-                )
-              : Stack(
+          child: Stack(
                   children: <Widget>[
+
                     Container(
                       height: 300,
                       width: double.infinity,
@@ -75,8 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.all(18.0),
                             child: Card(
                               shape: RoundedRectangleBorder(
-                                side:
-                                    BorderSide(color: Colors.red, width: 1),
+                                side: BorderSide(color: Colors.red, width: 1),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               elevation: 5,
@@ -126,8 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   top: 10),
                                               child: TextFormField(
                                                 autocorrect: false,
-                                                controller:
-                                                    _matricNoController,
+                                                controller: _matricNoController,
                                                 decoration: InputDecoration(
                                                     hintText: ''),
                                                 validator: (val) {
@@ -247,6 +277,29 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
+                    StreamBuilder(
+                        stream: widget.channel,
+                        builder: (context, snapshot) {
+                          return Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              children: <Widget>[
+                                CircularProgressIndicator(
+                                  backgroundColor: Colors.white,
+                                ),
+                                Opacity(
+                                  opacity: 0.0,
+                                  child: Text(
+                                    snapshot.hasData
+                                        ? receivedMessage(
+                                        String.fromCharCodes(snapshot.data))
+                                        : '',
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        }),
                   ],
                 ),
         ),
@@ -259,45 +312,26 @@ class _HomeScreenState extends State<HomeScreen> {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
-      setState(() {
-        _isLoading = true;
-      });
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('matricNumber',_matricNoController.text);
-      prefs.setString('password',_passwordController.text);
-      print('Sent to sharedpref');
-
-      //TODO: Server code comes here
-
       // concat strings
-      String message = 'signIN';
+      String message =
+          _matricNoController.text.trim() + "|" + _passwordController.text;
+      try {
+        widget.channel.write(message +'|login'+ '\n');
+        print('Sent to server');
 
-      // send to server //
-      widget.channel.write(message + '\n');
-      print('sending to server');
-      //get response //check if response was a true before proceeding //
-      String response = "okay";
+       // setState(() {
+      //    _isLoading = true;
+       // });
 
-      if (response == "okay") {
-        setState(() {
-          _isLoading = false;
-          print('sign up successful');
-          //save to sharedpref
-        });
-
-
-        // goes to the next activity
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => DashboardScreen(channel: widget.channel,),
-            ));
-      } else {
-        setState(() {
-          print('sign up NOT successful');
-          _isLoading = false;
-//toast an error message to user
-        });
+      } catch (e) {
+        Fluttertoast.showToast(
+            msg: 'Network Error..Reconnect',
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.blue,
+            textColor: Colors.white,
+            fontSize: 16.0);
       }
     } else {
       setState(() => _autoValidate = true);
@@ -310,3 +344,17 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 }
+
+/**
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('matricNumber',_matricNoController.text.trim());
+    prefs.setString('password',_passwordController.text);
+
+
+    // goes to the next activity
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+    builder: (_) => DashboardScreen(channel: widget.channel,),
+    ));
+ */

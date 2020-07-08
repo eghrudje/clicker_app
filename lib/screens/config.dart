@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:clickerapp/main.dart';
+import 'package:clickerapp/screens/quizHistory_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:clickerapp/screens/dashboard_screen.dart';
 import 'package:clickerapp/screens/sign_up.dart';
@@ -56,7 +57,7 @@ class _HomeScreenState extends State<ConfigScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(top: 180, bottom: 20),
                         child: Container(
-                          height: 500,
+                          height: 580,
                           width: 380,
                           child: Padding(
                             padding: const EdgeInsets.all(18.0),
@@ -184,7 +185,7 @@ class _HomeScreenState extends State<ConfigScreen> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.all(20),
+                                      padding: const EdgeInsets.all(15),
                                       child: MaterialButton(
                                         height: 60,
                                         minWidth: 300,
@@ -201,6 +202,35 @@ class _HomeScreenState extends State<ConfigScreen> {
                                           ),
                                         ),
                                         onPressed: submit,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(15),
+                                      child: MaterialButton(
+                                        height: 60,
+                                        minWidth: 300,
+                                        color: Colors.white,
+                                        child: Center(
+                                          child: Text(
+                                            'Quiz History',
+                                            style: TextStyle(
+                                              color: Colors.blue[700],
+                                              letterSpacing: 5.0,
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          GestureDetector(
+                                            onTap: () => Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (_) => QuizHistoryScreen()
+                                                )
+                                            ),
+                                          );
+                                        }
                                       ),
                                     ),
                                   ],
@@ -231,13 +261,20 @@ try{
       _isLoading = true;
     });
     print('sending to server');
-    //TODO: Server code comes here
-
-    // concat strings
-    String message = 'configPage';
-
     // send to server //
-    sock.write(message);
+    try {
+      sock.write("");
+    } catch (e){
+      Fluttertoast.showToast(
+          msg: e.toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+    }
 
     //get response //check if response was a true before proceeding //
     String response = "okay";
@@ -245,7 +282,7 @@ try{
     if (response == "okay") {
       setState(() {
         _isLoading = false;
-        print('sign up successful');
+        print('config successful');
         //save to sharedpref
       });
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -254,7 +291,7 @@ try{
       print("Sent to sharedpref");
 
       // goes to the next activity
-      Navigator.push(
+      Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (_) => HomeScreen(channel: sock),

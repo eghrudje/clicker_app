@@ -54,7 +54,6 @@ class _QuizScreenState extends State<QuizScreen> {
     selectedRadioOption = 0;
   }
 
-
   String receivedMessage(String message) {
 //CATCH FIRST TIME EXCEPTION
     counter++;
@@ -89,135 +88,129 @@ class _QuizScreenState extends State<QuizScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 80, left: 30),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          'Question',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 35,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 80, left: 30),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Question',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 35,
+                      fontWeight: FontWeight.bold,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          reverse: true,
-                          child: StreamBuilder(
-                            stream: widget.channel,
-                            builder: (context, snapshot) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16, horizontal: 10),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        snapshot.hasData
-                                            ? receivedMessage(
-                                                String.fromCharCodes(
-                                                    snapshot.data))
-                                            : 'Waiting for a question',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    reverse: true,
+                    child: StreamBuilder(
+                      stream: widget.channel,
+                      builder: (context, snapshot) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16, horizontal: 10),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  snapshot.hasData
+                                      ? receivedMessage(
+                                          String.fromCharCodes(snapshot.data))
+                                      : 'Waiting for a question',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w400,
                                   ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: <Widget>[
-                                      Column(
-                                        children: <Widget>[
-                                          Container(
-                                            height: 450,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width-20,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Scrollbar(
-                                                child: SingleChildScrollView(
-                                                  scrollDirection:
-                                                      Axis.vertical,
-                                                  child: Card(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      side: BorderSide(
-                                                          color: Colors.white70,
-                                                          width: 1),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-                                                    ),
-                                                    elevation: 10,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: <Widget>[
-                                                        optionType ==
-                                                                'Multiple Choice'
-                                                            ? RadioButtonMC()
-                                                            : RadioButtonTF(),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Container(
+                                      height: 450,
+                                      width: MediaQuery.of(context).size.width -
+                                          20,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Scrollbar(
+                                          child: SingleChildScrollView(
+                                            scrollDirection: Axis.vertical,
+                                            child: Card(
+                                              shape: RoundedRectangleBorder(
+                                                side: BorderSide(
+                                                    color: Colors.white70,
+                                                    width: 1),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              elevation: 10,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  optionType ==
+                                                          'Multiple Choice'
+                                                      ? RadioButtonMC()
+                                                      : RadioButtonTF(),
+                                                ],
                                               ),
                                             ),
                                           ),
-                                        ],
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: Material(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(22),
-                                      ),
-                                      elevation: 15,
-                                      color: Color(0xFF801E48),
-                                      child: isQuestionReceived
-                                          ? MaterialButton(
-                                              minWidth: 200,
-                                              height: 40,
-                                              color: Color(0xFF801E48),
-                                              child: Text(
-                                                'Submit',
-                                                style: TextStyle(
-                                                  fontSize: 30,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontStyle: FontStyle.italic,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                onPressed: submit)
-//                                              onPressed: sendBackToServer)
-                                          : Container(),
                                     ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                      ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Material(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(22),
+                                ),
+                                elevation: 15,
+                                color: Color(0xFF801E48),
+                                child: isQuestionReceived
+                                    ? MaterialButton(
+                                        minWidth: 200,
+                                        height: 40,
+                                        color: Color(0xFF801E48),
+                                        child: Text(
+                                          'Submit',
+                                          style: TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold,
+                                            fontStyle: FontStyle.italic,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        onPressed: submit)
+//                                              onPressed: sendBackToServer)
+                                    : Container(),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
-                  ],
+                  ),
                 ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -377,38 +370,56 @@ class _QuizScreenState extends State<QuizScreen> {
 
   submit() async {
     //Checks for validation
-    if (selectedRadioOption == 0 && selectedRadioOption == 0) {
+    if (selectedRadioOption == 0) {
       Fluttertoast.showToast(
           msg: 'Please select an option',
-          toastLength: Toast.LENGTH_SHORT,
+          toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.blue,
           textColor: Colors.white,
           fontSize: 16.0);
     } else {
-      print('sending to server');
-      //TODO: Server code comes here
-      // concat strings
-      String message = 'Testing the mic. 1-2';
-      // send to server //
-      widget.channel.write(message + '\n');
-      //get response //check if response was a true before proceeding //
-      String response = "okay";
-      if (response == "okay") {
-        setState(() {
-          _isLoading = false;
-          print('sign up successful');
-        });
+      //get matric number from sharedPref
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String matric = prefs.getString('matricNumber');
+      String name = prefs.getString('name');
 
-        // goes to the next activity
+
+      if (optionT == 'True/False') {
+        // concat like this
+        /*
+        *     question*#answer*#matricNo
+        * */
+        String answer;
+        selectedRadioOption == 1 ? answer = 'True' : answer = 'False';
+        String message = name + '|' + question + '|' + answer + "|" + matric;
+        print('sending to server');
+        // send to server //
+        widget.channel.write(message + '\n');
+        // goes to the previous activity
         Navigator.pop(context);
-      } else {
-        setState(() {
-          print('sign up NOT successful');
-          _isLoading = false;
-//toast an error message to user
-        });
+      } else if (optionT == 'Multiple Choice') {
+        // concat like this
+        /*
+        *     question*#answer*#matricNo
+        * */
+        String answer = questionOptions[selectedRadioOption];
+        String message = name + '|' + question + '|' + answer + "|" + matric;
+        print('sending to server');
+        // send to server //
+        widget.channel.write(message + ' | ' + 'response' + '\n');
+        // goes to the previous activity
+
+        Fluttertoast.showToast(
+            msg: 'Answer Received',
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        Navigator.pop(context);
       }
     }
   }

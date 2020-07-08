@@ -9,13 +9,18 @@ import 'dart:io';
 class DashboardScreen extends StatefulWidget {
   Socket socket;
 
+
   signUpScreen(Socket s) {
     this.socket = s;
   }
 
   final Socket channel;
+  final String fullName;
+  final String level;
+  final String department;
 
-  DashboardScreen({Key key, @required this.channel}) : super(key: key);
+  DashboardScreen({Key key, @required this.channel, this.fullName, this.level, this.department}) : super(key: key);
+
 
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
@@ -83,7 +88,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  'Name',
+//                                  'Name',
+                                  widget.fullName,
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontSize: 30,
@@ -93,7 +99,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ),
                                 SizedBox(height: 5),
                                 Text(
-                                  'Department',
+//                                  'Department',
+                                widget.department,
                                   style: TextStyle(
                                     fontSize: 25,
                                     fontStyle: FontStyle.italic,
@@ -102,7 +109,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ),
                                 ),
                                 Text(
-                                  'Level',
+//                                  'Level',
+                                widget.level,
                                   style: TextStyle(
                                     fontSize: 20,
                                     //fontWeight: FontWeight.bold,
