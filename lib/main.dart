@@ -6,20 +6,18 @@ import 'package:clickerapp/screens/signup_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:toast/toast.dart';
 
-class HomeScreen extends StatefulWidget {
+class SignIn extends StatefulWidget {
+  Socket channel;
 
-
-  final Socket channel;
-
-  HomeScreen({Key key, @required this.channel}) : super(key: key);
+  SignIn({Key key, @required this.channel}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _SignInState createState() => _SignInState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _SignInState extends State<SignIn> {
   bool _isLoading = false;
   bool _autoValidate = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -29,17 +27,26 @@ class _HomeScreenState extends State<HomeScreen> {
   String fullName;
   String level;
   String department;
+  Iterable<int> it = [];
 
- String receivedMessage(String message)  {
+  String receivedMessage(String message) {
 //CATCH FIRST TIME EXCEPTION
-   print("Reached here");
+    //split
+    String response = "";
+
+    try {
+      response = message.substring(25, message.length - 5);
+    } catch (Exception) {}
+
+    //  Toast.show(response.toString(), context, duration: Toast.LENGTH_SHORT);
+    print("Reached here. Message: " + response.toString());
 
 //   counter++;
     //.................Split ohhhhh... when you are done splitting, then setState.............//
-  //  if (counter > 1) {
-      print('Incoming: ${message.toString()}');
+    if ( response.length > 7) {
+      print('Incoming: ${response.toString()}');
       //split
-      dynamic splited = message.split('*#');
+      dynamic splited = response.split('*#');
 
       print(splited);
 
@@ -47,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
       level = splited[1];
       department = splited[2];
       print(fullName + level + department);
-
 
 //      SharedPreferences prefs;
 //      prefs = await SharedPreferences.getInstance();
@@ -66,14 +72,13 @@ class _HomeScreenState extends State<HomeScreen> {
               fullName: fullName,
               level: level,
               department: department,
-
             ),
           ));
-  //  }
+    }
 
+    counter++;
     return "done";
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -82,232 +87,232 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Stack(
-                  children: <Widget>[
-
-                    Container(
-                      height: 300,
-                      width: double.infinity,
-                      color: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.all(50),
-                        child: Image(
-                          image: AssetImage('assets/logos/logo3.jpg'),
-                          fit: BoxFit.scaleDown,
+            children: <Widget>[
+              Container(
+                height: 300,
+                width: double.infinity,
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(50),
+                  child: Image(
+                    image: AssetImage('assets/logos/logo3.jpg'),
+                    fit: BoxFit.scaleDown,
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 180, bottom: 20),
+                  child: Container(
+                    height: 500,
+                    width: 380,
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.red, width: 1),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 180, bottom: 20),
-                        child: Container(
-                          height: 500,
-                          width: 380,
-                          child: Padding(
-                            padding: const EdgeInsets.all(18.0),
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.red, width: 1),
-                                borderRadius: BorderRadius.circular(20),
+                        elevation: 5,
+                        child: new Form(
+                          key: _formKey,
+                          autovalidate: _autoValidate,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topCenter,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(25.0),
+                                  child: Text(
+                                    'SIGN IN',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                               ),
-                              elevation: 5,
-                              child: new Form(
-                                key: _formKey,
-                                autovalidate: _autoValidate,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 30, bottom: 10, top: 15),
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    'USERNAME',
+                                    style: TextStyle(
+                                      color: Colors.grey[800],
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                child: Row(
                                   children: <Widget>[
-                                    Align(
-                                      alignment: Alignment.topCenter,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(25.0),
-                                        child: Text(
-                                          'SIGN IN',
-                                          style: TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 40,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 30, bottom: 10, top: 15),
-                                      child: Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          'USERNAME',
-                                          style: TextStyle(
-                                            color: Colors.grey[800],
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      child: Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 30,
-                                                  bottom: 10,
-                                                  top: 10),
-                                              child: TextFormField(
-                                                autocorrect: false,
-                                                controller: _matricNoController,
-                                                decoration: InputDecoration(
-                                                    hintText: ''),
-                                                validator: (val) {
-                                                  if (val.length == 0) {
-                                                    return 'Username Not filled';
-                                                  } else {
-                                                    return null;
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
+                                    Expanded(
                                       child: Padding(
                                         padding: const EdgeInsets.only(
-                                            left: 30, bottom: 10, top: 15),
-                                        child: Text(
-                                          'PASSWORD',
-                                          style: TextStyle(
-                                            color: Colors.grey[800],
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                            left: 30, bottom: 10, top: 10),
+                                        child: TextFormField(
+                                          autocorrect: false,
+                                          controller: _matricNoController,
+                                          decoration:
+                                              InputDecoration(hintText: ''),
+                                          validator: (val) {
+                                            if (val.length == 0) {
+                                              return 'Username Not filled';
+                                            } else {
+                                              return null;
+                                            }
+                                          },
                                         ),
                                       ),
-                                    ),
-                                    Container(
-                                      child: Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 30,
-                                                  bottom: 10,
-                                                  top: 10),
-                                              child: TextFormField(
-                                                controller: _passwordController,
-                                                obscureText: true,
-                                                autocorrect: false,
-                                                decoration: InputDecoration(
-                                                    //labelText: 'Password',
-                                                    ),
-                                                validator: (val) {
-                                                  if (val.length == 0) {
-                                                    return 'Password Not filled';
-                                                  } else {
-                                                    return null;
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(20),
-                                      child: MaterialButton(
-                                        height: 60,
-                                        minWidth: 300,
-                                        color: Colors.blue[700],
-                                        child: Center(
-                                          child: Text(
-                                            'SIGN IN',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              letterSpacing: 5.0,
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        onPressed: submit,
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text(
-                                          'New user?',
-                                          style: TextStyle(
-                                            color: Colors.grey[800],
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        SizedBox(width: 15),
-                                        GestureDetector(
-                                          onTap: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) =>
-                                                  signUpScreen(widget.channel),
-                                            ),
-                                          ),
-                                          child: Text(
-                                            'Sign Up',
-                                            style: TextStyle(
-                                              color: Colors.blue,
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 30, bottom: 10, top: 15),
+                                  child: Text(
+                                    'PASSWORD',
+                                    style: TextStyle(
+                                      color: Colors.grey[800],
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 30, bottom: 10, top: 10),
+                                        child: TextFormField(
+                                          controller: _passwordController,
+                                          obscureText: true,
+                                          autocorrect: false,
+                                          decoration: InputDecoration(
+                                              //labelText: 'Password',
+                                              ),
+                                          validator: (val) {
+                                            if (val.length == 0) {
+                                              return 'Password Not filled';
+                                            } else {
+                                              return null;
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: MaterialButton(
+                                  height: 60,
+                                  minWidth: 300,
+                                  color: Colors.blue[700],
+                                  child: Center(
+                                    child: Text(
+                                      'SIGN IN',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        letterSpacing: 5.0,
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  onPressed: submit,
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    'New user?',
+                                    style: TextStyle(
+                                      color: Colors.grey[800],
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(width: 15),
+                                  GestureDetector(
+                                    onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            signUpScreen(widget.channel),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Sign Up',
+                                      style: TextStyle(
+                                        color: Colors.blue,
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                    StreamBuilder(
-                        stream: widget.channel,
-                        builder: (context, snapshot) {
-                          return Align(
-                            alignment: Alignment.center,
-                            child: Column(
-                              children: <Widget>[
-                                CircularProgressIndicator(
-                                  backgroundColor: Colors.white,
-                                ),
-                                Opacity(
-                                  opacity: 0.0,
-                                  child: Text(
-                                    snapshot.hasData
-                                        ? receivedMessage(
-                                        String.fromCharCodes(snapshot.data))
-                                        : '',
-                                  ),
-                                )
-                              ],
-                            ),
-                          );
-                        }),
-                  ],
+                  ),
                 ),
+              ),
+              StreamBuilder(
+                  initialData: it,
+                  stream: widget.channel,
+                  builder: (context, snapshot) {
+                    return Align(
+                      alignment: Alignment.center,
+                      child: Column(
+                        children: <Widget>[
+                          Opacity(
+                            opacity: 0.0,
+                            child: Text(
+                              snapshot.hasData
+                                  ? receivedMessage(
+                                      String.fromCharCodes(snapshot.data))
+                                  : '',
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  }),
+            ],
+          ),
         ),
       ),
     );
   }
 
   submit() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String ip = prefs.getString('ipAddress');
+    String port = prefs.getString('port');
+    Socket socket = await Socket.connect(ip, int.parse(port));
+    try {
+      widget.channel.close();
+      widget.channel = socket;
+    } catch (e) {}
     //Checks for validation
     final form = _formKey.currentState;
     if (form.validate()) {
@@ -316,22 +321,16 @@ class _HomeScreenState extends State<HomeScreen> {
       String message =
           _matricNoController.text.trim() + "|" + _passwordController.text;
       try {
-        widget.channel.write(message +'|login'+ '\n');
+        socket.write(message + '|login' + '\n');
         print('Sent to server');
 
-       // setState(() {
-      //    _isLoading = true;
-       // });
+        // setState(() {
+        //    _isLoading = true;
+        // });
 
       } catch (e) {
-        Fluttertoast.showToast(
-            msg: 'Network Error..Reconnect',
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 2,
-            backgroundColor: Colors.blue,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        Toast.show('Network Error..Reconnect', context,
+            duration: Toast.LENGTH_SHORT);
       }
     } else {
       setState(() => _autoValidate = true);

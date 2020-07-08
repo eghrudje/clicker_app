@@ -1,9 +1,9 @@
 import 'package:clickerapp/screens/dashboard_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 import '../main.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
-import 'package:fluttertoast/fluttertoast.dart';
 
 //void main() async {
 //  Socket sock = await Socket.connect('192.168.0.103', 3001);
@@ -430,7 +430,7 @@ class _SignUpScreenState extends State<signUpScreen> {
                                     onTap: () => Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => HomeScreen(
+                                        builder: (_) => SignIn(
                                           channel: widget.socket,
                                         ),
                                       ),
@@ -454,7 +454,7 @@ class _SignUpScreenState extends State<signUpScreen> {
                                           onTap: () => Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (_) => HomeScreen(
+                                              builder: (_) => SignIn(
                                                 channel: widget.socket,
                                               ),
                                             ),
@@ -519,14 +519,8 @@ class _SignUpScreenState extends State<signUpScreen> {
         widget.socket.write(message + '\n');
         Navigator.pop(context);
       } catch (e) {
-        Fluttertoast.showToast(
-            msg: 'Network Error..Reconnect',
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.blue,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        Toast.show('Network Error..Reconnect',context);
+
       }
     } else {
       setState(() => _autoValidate = true);

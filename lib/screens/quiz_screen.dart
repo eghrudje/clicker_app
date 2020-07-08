@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:toast/toast.dart';
 
 class QuizScreen extends StatefulWidget {
 //  setup() async {
@@ -371,14 +371,7 @@ class _QuizScreenState extends State<QuizScreen> {
   submit() async {
     //Checks for validation
     if (selectedRadioOption == 0) {
-      Fluttertoast.showToast(
-          msg: 'Please select an option',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.blue,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      Toast.show('Please select an option',context);
     } else {
       //get matric number from sharedPref
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -410,15 +403,7 @@ class _QuizScreenState extends State<QuizScreen> {
         // send to server //
         widget.channel.write(message + ' | ' + 'response' + '\n');
         // goes to the previous activity
-
-        Fluttertoast.showToast(
-            msg: 'Answer Received',
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 2,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        Toast.show("Answer Received",context);
         Navigator.pop(context);
       }
     }

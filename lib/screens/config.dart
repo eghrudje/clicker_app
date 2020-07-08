@@ -7,7 +7,8 @@ import 'package:clickerapp/screens/sign_up.dart';
 import 'package:clickerapp/screens/signup_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:toast/toast.dart';
+
 void main() {
   runApp(MaterialApp(
     home: ConfigScreen(),
@@ -113,7 +114,8 @@ class _HomeScreenState extends State<ConfigScreen> {
                                                   top: 10),
                                               child: TextFormField(
                                                 autocorrect: false,
-                                                keyboardType: TextInputType.phone,
+                                                keyboardType:
+                                                    TextInputType.phone,
                                                 controller:
                                                     _ipAddressController,
                                                 decoration: InputDecoration(
@@ -129,7 +131,7 @@ class _HomeScreenState extends State<ConfigScreen> {
 //                                                  if (regExp.hasMatch(value)) {
                                                   if (value.length > 6) {
                                                     return null;
-                                                  }else{
+                                                  } else {
                                                     return 'Enter a valid IP Address';
                                                   }
                                                 },
@@ -166,7 +168,8 @@ class _HomeScreenState extends State<ConfigScreen> {
                                               child: TextFormField(
                                                 controller: _portController,
                                                 autocorrect: false,
-                                                keyboardType: TextInputType.phone,
+                                                keyboardType:
+                                                    TextInputType.phone,
                                                 decoration: InputDecoration(
                                                     //labelText: 'Password',
                                                     ),
@@ -207,31 +210,29 @@ class _HomeScreenState extends State<ConfigScreen> {
                                     Padding(
                                       padding: const EdgeInsets.all(15),
                                       child: MaterialButton(
-                                        height: 60,
-                                        minWidth: 300,
-                                        color: Colors.white,
-                                        child: Center(
-                                          child: Text(
-                                            'Quiz History',
-                                            style: TextStyle(
-                                              color: Colors.blue[700],
-                                              letterSpacing: 5.0,
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.bold,
+                                          height: 60,
+                                          minWidth: 300,
+                                          color: Colors.white,
+                                          child: Center(
+                                            child: Text(
+                                              'Quiz History',
+                                              style: TextStyle(
+                                                color: Colors.blue[700],
+                                                letterSpacing: 5.0,
+                                                fontSize: 25,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        onPressed: () {
-                                          GestureDetector(
-                                            onTap: () => Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (_) => QuizHistoryScreen()
-                                                )
-                                            ),
-                                          );
-                                        }
-                                      ),
+                                          onPressed: () {
+                                            GestureDetector(
+                                              onTap: () => Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          QuizHistoryScreen())),
+                                            );
+                                          }),
                                     ),
                                   ],
                                 ),
@@ -249,76 +250,60 @@ class _HomeScreenState extends State<ConfigScreen> {
   }
 
   submit() async {
-try{
-  Socket sock = await Socket.connect(
-      _ipAddressController.text, int.parse(_portController.text));
-
-  //Checks for validation
-  final form = _formKey.currentState;
-  if (form.validate()) {
-    form.save();
-    setState(() {
-      _isLoading = true;
-    });
-    print('sending to server');
-    // send to server //
     try {
-      sock.write("");
-    } catch (e){
-      Fluttertoast.showToast(
-          msg: e.toString(),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-    }
+      Socket sock = await Socket.connect(
+          _ipAddressController.text, int.parse(_portController.text));
 
-    //get response //check if response was a true before proceeding //
-    String response = "okay";
+      //Checks for validation
+      final form = _formKey.currentState;
+      if (form.validate()) {
+        form.save();
+        setState(() {
+          _isLoading = true;
+        });
+        print('sending to server');
+        // send to server //
+        try {
+          sock.write("");
+        } catch (e) {
+          Toast.show(e.toString(),context);
+        }
 
-    if (response == "okay") {
-      setState(() {
-        _isLoading = false;
-        print('config successful');
-        //save to sharedpref
-      });
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('ipAddress', _ipAddressController.text);
-      prefs.setString('port', _portController.text);
-      print("Sent to sharedpref");
+        //get response //check if response was a true before proceeding //
+        String response = "okay";
 
-      // goes to the next activity
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => HomeScreen(channel: sock),
-          ));
-    } else {
-      setState(() {
-        print('sign up NOT successful');
-        _isLoading = false;
+        if (response == "okay") {
+          setState(() {
+            _isLoading = false;
+            print('config successful');
+            //save to sharedpref
+          });
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('ipAddress', _ipAddressController.text);
+          prefs.setString('port', _portController.text);
+          print("Sent to sharedpref");
+
+          // goes to the next activity
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => SignIn(channel: sock),
+              ));
+        } else {
+          setState(() {
+            print('sign up NOT successful');
+            _isLoading = false;
 //toast an error message to user
-      });
-    }
-  } else {
-    setState(() => _autoValidate = true);
-  }
-}catch  (e){
-  //toast an error message to user
-  Fluttertoast.showToast(
-      msg: e.toString(),
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      fontSize: 16.0
-  );
-}
+          });
+        }
+      } else {
+        setState(() => _autoValidate = true);
+      }
+    } catch (e) {
+      //toast an error message to user
+      Toast.show(e.toString(),context);
 
+    }
   }
 
   @override

@@ -8,7 +8,6 @@ class SignUpScreen extends StatefulWidget {
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
-
 class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
@@ -378,7 +377,7 @@ class _buildVerticalLaoutState extends State<buildVerticalLayout> {
                                   onTap: () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => HomeScreen(),
+                                      builder: (_) => SignIn(),
                                     ),
                                   ),
                                   child: Container(
@@ -400,7 +399,7 @@ class _buildVerticalLaoutState extends State<buildVerticalLayout> {
                                         onTap: () => Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (_) => HomeScreen(),
+                                            builder: (_) => SignIn(),
                                           ),
                                         ),
                                         child: Text(
@@ -693,7 +692,7 @@ class _buildHorizontalLayoutState extends State<buildHorizontalLayout> {
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => HomeScreen(),
+                                builder: (_) => SignIn(),
                               ),
                             ),
                             child: Container(
@@ -715,7 +714,7 @@ class _buildHorizontalLayoutState extends State<buildHorizontalLayout> {
                                   onTap: () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => HomeScreen(),
+                                      builder: (_) => SignIn(),
                                     ),
                                   ),
                                   child: Text(
