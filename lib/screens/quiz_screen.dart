@@ -1,3 +1,4 @@
+import 'package:clickerapp/screens/config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -41,6 +42,7 @@ class _QuizScreenState extends State<QuizScreen> {
   String question = '';
   String answer = '';
   int counter = 0;
+  Iterable<int> it = [];
 
   setSelectedRadioOption(int val) {
     setState(() {
@@ -58,7 +60,7 @@ class _QuizScreenState extends State<QuizScreen> {
 //CATCH FIRST TIME EXCEPTION
     counter++;
     //.................Split ohhhhh... when you are done spliting, then setState.............//
-    if (counter > 2) {
+    if (counter > 0) {
       print('Incoming: ${message.toString()}');
       //split
       dynamic splited = message.split('*#');
@@ -76,7 +78,7 @@ class _QuizScreenState extends State<QuizScreen> {
       isQuestionReceived = true;
       optionType = optionT;
 
-      return question.substring(21, question.length);
+      return question;
     } else {
       return 'Connected To Teacher';
     }
@@ -111,6 +113,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     scrollDirection: Axis.vertical,
                     reverse: true,
                     child: StreamBuilder(
+//                      initialData: it,
                       stream: widget.channel,
                       builder: (context, snapshot) {
                         return Column(
@@ -364,48 +367,56 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  sendBackToServer() {
-    widget.channel.write('We see you bro');
-  }
+//  sendBackToServer() {
+//    widget.channel.write('We see you bro');
+//  }
 
   submit() async {
     //Checks for validation
-    if (selectedRadioOption == 0) {
-      Toast.show('Please select an option',context);
-    } else {
-      //get matric number from sharedPref
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String matric = prefs.getString('matricNumber');
-      String name = prefs.getString('name');
+    try {
+      if (selectedRadioOption == 0) {
+        Toast.show('Please select an option', context);
+      } else {
+        //get matric number from sharedPref
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+       String matric = prefs.getString('matricNo');
+       String name = prefs.getString('name');
 
-
-      if (optionT == 'True/False') {
-        // concat like this
-        /*
+        if (optionT == 'True/False') {
+          // concat like this
+          /*
         *     question*#answer*#matricNo
         * */
-        String answer;
-        selectedRadioOption == 1 ? answer = 'True' : answer = 'False';
-        String message = name + '|' + question + '|' + answer + "|" + matric;
-        print('sending to server');
-        // send to server //
-        widget.channel.write(message + '\n');
-        // goes to the previous activity
-        Navigator.pop(context);
-      } else if (optionT == 'Multiple Choice') {
-        // concat like this
-        /*
+          String answer;
+          selectedRadioOption == 1 ? answer = 'True' : answer = 'False';
+          String message = name + '|' + question + '|' + answer + '|' + matric;
+          print('sending to server');
+          // send to server //
+          widget.channel.write('response' + '|' + message + '\n');
+          // goes to the previous activity
+          Navigator.pop(context);
+        } else if (optionT == 'Multiple Choice') {
+          // concat like this
+          /*
         *     question*#answer*#matricNo
         * */
-        String answer = questionOptions[selectedRadioOption];
-        String message = name + '|' + question + '|' + answer + "|" + matric;
-        print('sending to server');
-        // send to server //
-        widget.channel.write(message + ' | ' + 'response' + '\n');
-        // goes to the previous activity
-        Toast.show("Answer Received",context);
-        Navigator.pop(context);
+          String answer = questionOptions[selectedRadioOption];
+          String message = name + '|' + question + '|' + answer + '|' + matric;
+          print('sending to server');
+          // send to server //
+          widget.channel.write('response' + '|' + message + '\n');
+          // goes to the previous activity
+          Toast.show("Answer Received", context);
+
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ConfigScreen(),
+              ));
+        }
       }
+    } on Exception {
+      throw ('Something went wrong');
     }
   }
 

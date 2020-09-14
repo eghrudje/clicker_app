@@ -1,26 +1,38 @@
 import 'package:clickerapp/screens/quizHistory_screen.dart';
 import 'package:clickerapp/screens/quiz_screen.dart' as quiz;
+import 'package:clickerapp/screens/quiz_screen.dart';
 import 'package:clickerapp/screens/settings_screen.dart';
 import 'package:clickerapp/screens/signup_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class DashboardScreen extends StatefulWidget {
-  Socket socket;
+//  Socket socket;
+//
+//  signUpScreen(Socket s) {
+//    this.socket = s;
+//  }
 
-
-  signUpScreen(Socket s) {
-    this.socket = s;
-  }
-
-  final Socket channel;
+  Socket channel;
   final String fullName;
   final String level;
   final String department;
+  final String matric;
 
-  DashboardScreen({Key key, @required this.channel, this.fullName, this.level, this.department}) : super(key: key);
+  String ip;
+  String port;
 
+  DashboardScreen(
+      {Key key,
+        this.channel,
+      this.fullName,
+      this.level,
+      this.department,
+      this.matric})
+      : super(key: key);
 
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
@@ -100,7 +112,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 SizedBox(height: 5),
                                 Text(
 //                                  'Department',
-                                widget.department,
+                                  widget.department,
                                   style: TextStyle(
                                     fontSize: 25,
                                     fontStyle: FontStyle.italic,
@@ -110,7 +122,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ),
                                 Text(
 //                                  'Level',
-                                widget.level,
+                                  widget.level,
                                   style: TextStyle(
                                     fontSize: 20,
                                     //fontWeight: FontWeight.bold,
@@ -173,7 +185,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               color: Colors.green,
                                               size: 40,
                                             ),
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (_) => QuizScreen(
+                                                      channel: widget.channel,
+                                                    ),
+                                                  ));
+                                            },
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(
@@ -214,6 +234,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                             color: Colors.purple,
                                             size: 40,
                                           ),
+                                          onPressed: () {},
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.only(
@@ -348,12 +369,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  void createNewConnection() async {
-    //create a connection
-    Socket socket = await Socket.connect('192.168.43.254', 3001);
-    // call
-    quiz.QuizScreen(
-      channel: socket,
-    );
+//  void createNewConnection() async {
+//    //create a connection
+//    Socket socket = await Socket.connect('192.168.43.254', 3001);
+//    // call
+//    quiz.QuizScreen(
+//      channel: socket,
+//    );
+//  }
+
+  @override
+  void initState() {
+    save();
+  }
+
+  @override
+  void dispose() {
+//    widget.channel.close();
+    super.dispose();
+  }
+
+  void save() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('name', widget.fullName);
+    prefs.setString('level', widget.level);
+    prefs.setString('department', widget.department);
+    prefs.setString('matricNo', widget.matric);
+
+    widget.ip = prefs.getString("ipAddress");
+    widget.port = prefs.getString("port");
+    widget.channel = await Socket.connect(widget.ip, int.parse(widget.port));
+
   }
 }

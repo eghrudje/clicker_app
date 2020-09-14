@@ -24,59 +24,41 @@ class _SignInState extends State<SignIn> {
   TextEditingController _matricNoController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
   int counter = 0;
+  bool visible = false;
   String fullName;
   String level;
   String department;
-  Iterable<int> it = [];
+  String matricNo;
+
+//  Iterable<int> it = [];
 
   String receivedMessage(String message) {
 //CATCH FIRST TIME EXCEPTION
-    //split
-    String response = "";
+    counter++;
+    if (counter > 0) {
+      print('Incoming: ${message.toString()}');
 
-    try {
-      response = message.substring(25, message.length - 5);
-    } catch (Exception) {}
+      try {
+        print("Reached here fa. Message: " + message.toString());
+        if (message.toString().length > 3) {
+          print('Incame: ${message.toString()}');
+          //split
+          List<String> splited = message.split('*#');
+          print(splited);
 
-    //  Toast.show(response.toString(), context, duration: Toast.LENGTH_SHORT);
-    print("Reached here. Message: " + response.toString());
-
-//   counter++;
-    //.................Split ohhhhh... when you are done splitting, then setState.............//
-    if ( response.length > 7) {
-      print('Incoming: ${response.toString()}');
-      //split
-      dynamic splited = response.split('*#');
-
-      print(splited);
-
-      fullName = splited[0];
-      level = splited[1];
-      department = splited[2];
-      print(fullName + level + department);
-
-//      SharedPreferences prefs;
-//      prefs = await SharedPreferences.getInstance();
-//
-//      prefs.setString('matricNumber', _matricNoController.text.trim());
-//      prefs.setString('name', splited[0]);
-//      prefs.setString('level', splited[1]);
-//      prefs.setString('department', splited[2]);
-
-      // goes to the next activity
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => DashboardScreen(
-              channel: widget.channel,
-              fullName: fullName,
-              level: level,
-              department: department,
-            ),
-          ));
+          fullName = splited[0].toString();
+          level = splited[1].toString();
+          department = splited[2].toString();
+          matricNo = _matricNoController.text;
+          print(fullName + level + department + matricNo);
+          _isLoading = true;
+        }
+      } catch (e) {
+        throw Exception("Something went wrong");
+      }
     }
 
-    counter++;
+    // counter++;
     return "done";
   }
 
@@ -105,7 +87,7 @@ class _SignInState extends State<SignIn> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 180, bottom: 20),
                   child: Container(
-                    height: 500,
+                    height: MediaQuery.of(context).size.height - 10,
                     width: 380,
                     child: Padding(
                       padding: const EdgeInsets.all(18.0),
@@ -218,14 +200,14 @@ class _SignInState extends State<SignIn> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(10),
                                 child: MaterialButton(
                                   height: 60,
                                   minWidth: 300,
                                   color: Colors.blue[700],
                                   child: Center(
                                     child: Text(
-                                      'SIGN IN',
+                                      'VERIFY',
                                       style: TextStyle(
                                         color: Colors.white,
                                         letterSpacing: 5.0,
@@ -236,6 +218,28 @@ class _SignInState extends State<SignIn> {
                                   ),
                                   onPressed: submit,
                                 ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: visible
+                                    ? MaterialButton(
+                                        height: 60,
+                                        minWidth: 300,
+                                        color: Colors.white,
+                                        child: Center(
+                                          child: Text(
+                                            'CONTINUE',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              letterSpacing: 5.0,
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        onPressed: goto,
+                                      )
+                                    : Container(),
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -277,7 +281,7 @@ class _SignInState extends State<SignIn> {
                 ),
               ),
               StreamBuilder(
-                  initialData: it,
+//                  initialData: it,
                   stream: widget.channel,
                   builder: (context, snapshot) {
                     return Align(
@@ -321,13 +325,12 @@ class _SignInState extends State<SignIn> {
       String message =
           _matricNoController.text.trim() + "|" + _passwordController.text;
       try {
-        socket.write(message + '|login' + '\n');
+        socket.write('login|' + message);
         print('Sent to server');
-
-        // setState(() {
-        //    _isLoading = true;
-        // });
-
+        //MAKE CONTINUE VISIBLE
+        setState(() {
+          visible = true;
+        });
       } catch (e) {
         Toast.show('Network Error..Reconnect', context,
             duration: Toast.LENGTH_SHORT);
@@ -337,10 +340,30 @@ class _SignInState extends State<SignIn> {
     }
   }
 
+  void initState() {
+    super.initState();
+  }
+
   @override
   void dispose() {
-    widget.channel.close();
+//    widget.channel.destroy();
     super.dispose();
+  }
+
+  void goto() {
+    if (_isLoading) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DashboardScreen(
+              channel: widget.channel,
+              fullName: fullName,
+              level: level,
+              department: department,
+              matric: matricNo,
+            ),
+          ));
+    }
   }
 }
 

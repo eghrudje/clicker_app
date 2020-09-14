@@ -3,7 +3,7 @@ import 'package:clickerapp/main.dart';
 import 'package:clickerapp/screens/quizHistory_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:clickerapp/screens/dashboard_screen.dart';
-import 'package:clickerapp/screens/sign_up.dart';
+import 'package:clickerapp/screens/quiz_screen.dart';
 import 'package:clickerapp/screens/signup_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,215 +35,216 @@ class _HomeScreenState extends State<ConfigScreen> {
         child: SingleChildScrollView(
           child: _isLoading
               ? Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.white,
-                  ),
-                )
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.white,
+            ),
+          )
               : Stack(
-                  children: <Widget>[
-                    Container(
-                      height: 300,
-                      width: double.infinity,
-                      color: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.all(50),
-                        child: Image(
-                          image: AssetImage('assets/logos/logo3.jpg'),
-                          fit: BoxFit.scaleDown,
+            children: <Widget>[
+              Container(
+                height: 300,
+                width: double.infinity,
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(50),
+                  child: Image(
+                    image: AssetImage('assets/logos/logo3.jpg'),
+                    fit: BoxFit.scaleDown,
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 180, bottom: 20),
+                  child: Container(
+                    height: 580,
+                    width: 380,
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.red, width: 0.2),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 180, bottom: 20),
-                        child: Container(
-                          height: 580,
-                          width: 380,
-                          child: Padding(
-                            padding: const EdgeInsets.all(18.0),
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.red, width: 0.2),
-                                borderRadius: BorderRadius.circular(20),
+                        elevation: 5,
+                        child: new Form(
+                          key: _formKey,
+                          autovalidate: _autoValidate,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topCenter,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(25.0),
+                                  child: Text(
+                                    'SETUP',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                               ),
-                              elevation: 5,
-                              child: new Form(
-                                key: _formKey,
-                                autovalidate: _autoValidate,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 30, bottom: 10, top: 15),
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    'IP Address',
+                                    style: TextStyle(
+                                      color: Colors.grey[800],
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                child: Row(
                                   children: <Widget>[
-                                    Align(
-                                      alignment: Alignment.topCenter,
+                                    Expanded(
                                       child: Padding(
-                                        padding: const EdgeInsets.all(25.0),
-                                        child: Text(
-                                          'SETUP',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 40,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 30, bottom: 10, top: 15),
-                                      child: Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          'IP Address',
-                                          style: TextStyle(
-                                            color: Colors.grey[800],
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      child: Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 30,
-                                                  bottom: 10,
-                                                  top: 10),
-                                              child: TextFormField(
-                                                autocorrect: false,
-                                                keyboardType:
-                                                    TextInputType.phone,
-                                                controller:
-                                                    _ipAddressController,
-                                                decoration: InputDecoration(
-                                                    hintText: ''),
-                                                validator: (value) {
-                                                  if (value.isEmpty) {
-                                                    return "Enter IP Address";
-                                                  }
+                                        padding: const EdgeInsets.only(
+                                            left: 30,
+                                            bottom: 10,
+                                            top: 10),
+                                        child: TextFormField(
+                                          autocorrect: false,
+                                          keyboardType:
+                                          TextInputType.phone,
+                                          controller:
+                                          _ipAddressController,
+                                          decoration: InputDecoration(
+                                              hintText: ''),
+                                          validator: (value) {
+                                            if (value.isEmpty) {
+                                              return "Enter IP Address";
+                                            }
 //                                                  String ip =
 //                                                      '/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\z/';
 //                                                  RegExp regExp =
 //                                                      new RegExp(ip);
 //                                                  if (regExp.hasMatch(value)) {
-                                                  if (value.length > 6) {
-                                                    return null;
-                                                  } else {
-                                                    return 'Enter a valid IP Address';
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 30, bottom: 10, top: 15),
-                                        child: Text(
-                                          'PORT',
-                                          style: TextStyle(
-                                            color: Colors.grey[800],
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                            if (value.length > 6) {
+                                              return null;
+                                            } else {
+                                              return 'Enter a valid IP Address';
+                                            }
+                                          },
                                         ),
                                       ),
-                                    ),
-                                    Container(
-                                      child: Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 30,
-                                                  bottom: 10,
-                                                  top: 10),
-                                              child: TextFormField(
-                                                controller: _portController,
-                                                autocorrect: false,
-                                                keyboardType:
-                                                    TextInputType.phone,
-                                                decoration: InputDecoration(
-                                                    //labelText: 'Password',
-                                                    ),
-                                                validator: (val) {
-                                                  assert(int.parse(val) is int);
-                                                  if (val.length == 0) {
-                                                    return 'Port Not filled';
-                                                  } else {
-                                                    return null;
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(15),
-                                      child: MaterialButton(
-                                        height: 60,
-                                        minWidth: 300,
-                                        color: Colors.blue[700],
-                                        child: Center(
-                                          child: Text(
-                                            'Config',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              letterSpacing: 5.0,
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        onPressed: submit,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(15),
-                                      child: MaterialButton(
-                                          height: 60,
-                                          minWidth: 300,
-                                          color: Colors.white,
-                                          child: Center(
-                                            child: Text(
-                                              'Quiz History',
-                                              style: TextStyle(
-                                                color: Colors.blue[700],
-                                                letterSpacing: 5.0,
-                                                fontSize: 25,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            GestureDetector(
-                                              onTap: () => Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (_) =>
-                                                          QuizHistoryScreen())),
-                                            );
-                                          }),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 30, bottom: 10, top: 15),
+                                  child: Text(
+                                    'PORT',
+                                    style: TextStyle(
+                                      color: Colors.grey[800],
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 30,
+                                            bottom: 10,
+                                            top: 10),
+                                        child: TextFormField(
+                                          controller: _portController,
+                                          autocorrect: false,
+                                          keyboardType:
+                                          TextInputType.phone,
+                                          decoration: InputDecoration(
+                                            //labelText: 'Password',
+                                          ),
+                                          validator: (val) {
+                                            assert(int.parse(val) is int);
+                                            if (val.length == 0) {
+                                              return 'Port Not filled';
+                                            } else {
+                                              return null;
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(15),
+                                child: MaterialButton(
+                                  height: 60,
+                                  minWidth: 300,
+                                  color: Colors.blue[700],
+                                  child: Center(
+                                    child: Text(
+                                      'Config',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        letterSpacing: 5.0,
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  onPressed: submit,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(15),
+                                child: MaterialButton(
+                                    height: 60,
+                                    minWidth: 300,
+                                    color: Colors.white,
+                                    child: Center(
+                                      child: Text(
+                                        'Quiz History',
+                                        style: TextStyle(
+                                          color: Colors.blue[700],
+                                          letterSpacing: 5.0,
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      GestureDetector(
+                                        onTap: () =>
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (_) =>
+                                                        QuizHistoryScreen())),
+                                      );
+                                    }),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -266,7 +267,7 @@ class _HomeScreenState extends State<ConfigScreen> {
         try {
           sock.write("");
         } catch (e) {
-          Toast.show(e.toString(),context);
+          Toast.show(e.toString(), context);
         }
 
         //get response //check if response was a true before proceeding //
@@ -284,11 +285,20 @@ class _HomeScreenState extends State<ConfigScreen> {
           print("Sent to sharedpref");
 
           // goes to the next activity
-          Navigator.pushReplacement(
+          Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (_) => SignIn(channel: sock),
               ));
+//          Navigator.push(
+//              context,
+//              MaterialPageRoute(
+//                builder: (_) => QuizScreen(
+//                  channel: sock,
+//                ),
+//              ));
+
+
         } else {
           setState(() {
             print('sign up NOT successful');
@@ -301,8 +311,7 @@ class _HomeScreenState extends State<ConfigScreen> {
       }
     } catch (e) {
       //toast an error message to user
-      Toast.show(e.toString(),context);
-
+      Toast.show(e.toString(), context);
     }
   }
 

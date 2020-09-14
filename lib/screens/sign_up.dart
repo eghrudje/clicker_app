@@ -499,7 +499,8 @@ class _SignUpScreenState extends State<signUpScreen> {
       //TODO: Server code comes here
 
       // concat strings
-      String message = _firstNameController.text +
+      String message =  "signUp" + "|" +
+          _firstNameController.text +
           "|" +
           _lastNameController.text +
           "|" +
@@ -513,7 +514,7 @@ class _SignUpScreenState extends State<signUpScreen> {
           "|" +
           _passwordController.text +
           "|" +
-          "student | signUp";
+          "student" ;
 
       try {
         widget.socket.write(message + '\n');
